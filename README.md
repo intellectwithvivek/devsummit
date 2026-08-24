@@ -196,6 +196,28 @@ directly in React Server Components with no client boundary.
 See **[/built-with](https://devsummit.vivekkumarsingh.in/built-with)** on the live demo for
 every component on the site mapped to its documentation page.
 
+## Images
+
+`next/image` runs through a **custom loader** ([`lib/image-loader.ts`](lib/image-loader.ts))
+rather than Vercel's built-in optimizer, and that is deliberate.
+
+Vercel meters Image Optimization. When a project exhausts its allowance, every request
+to `/_next/image` answers `402 Payment Required` and the site loses all of its
+photography at once — which is exactly what a free template on a Hobby plan will hit.
+The loader hands the resize to the CDN already serving the file: Unsplash and Pexels
+both run on Imgix, so `w`, `q` and `auto=format` give a correctly sized AVIF/WebP per
+breakpoint at no cost and with no quota.
+
+- It preserves the crop. Source URLs pin `w` **and** `h`; the loader rescales both from
+  the original ratio, so a wide request cannot distort the framing.
+- It is safe to swap hosts. Anything that is not a known Imgix host — another CDN, a file
+  in `/public` — is returned untouched instead of being handed parameters it does not
+  understand.
+- `deviceSizes` stops at 1920, because nothing here is displayed wider than ~1400px.
+
+To go back to Vercel's optimizer, delete `loader` and `loaderFile` from
+[`next.config.ts`](next.config.ts). The `remotePatterns` it needs are already there.
+
 ## Placeholder content and credits
 
 | What | Source |
