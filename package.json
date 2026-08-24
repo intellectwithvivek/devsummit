@@ -1,26 +1,60 @@
 {
   "name": "devsummit",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "private": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@the_viveksingh/vivek-ui": "^0.5.0",
     "next": "16.3.2",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.2",
-    "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "license": "MIT",
+  "description": "DevSummit 2026 — a free, open-source Next.js 16 conference and event website template built entirely with VivekUI. Live countdown, speaker grid, two-day schedule, ticket tiers and SVG charts. Clone it and ship your own event site.",
+  "keywords": [
+    "nextjs",
+    "nextjs-template",
+    "nextjs-16",
+    "react",
+    "react-19",
+    "typescript",
+    "conference-website",
+    "event-website",
+    "conference-template",
+    "event-template",
+    "free-template",
+    "open-source",
+    "vivekui",
+    "component-library",
+    "svg-charts",
+    "seo",
+    "accessibility",
+    "app-router"
+  ],
+  "author": "Vivek Kumar Singh <https://vivekkumarsingh.in>",
+  "homepage": "https://devsummit.vivekkumarsingh.in",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/intellectwithvivek/devsummit.git"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "bugs": {
+    "url": "https://github.com/intellectwithvivek/devsummit/issues"
   }
 }

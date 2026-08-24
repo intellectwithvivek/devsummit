@@ -1,0 +1,16 @@
+# Normalise line endings so contributors on Windows, macOS and Linux do not
+# produce whole-file diffs just by opening a file.
+* text=auto eol=lf
+
+# Binary — never touch.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
+
+# Keep the lockfile out of diff review; it is generated.
+package-lock.json linguist-generated=true -diff

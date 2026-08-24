@@ -1,26 +1,998 @@
-@import "tailwindcss";
+/* ==========================================================================
+   DevSummit 2026 — theme layer over VivekUI
+   Identity: "terminal lanyard" — violet accent, mono track codes, barcode and
+   ticket-perforation motifs. Every rule below is a single flat class or a
+   token re-point, so nothing needs !important to beat the library's :where().
+   ========================================================================== */
+
+/* --- Tokens ------------------------------------------------------------- */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Accent: violet */
+  --vk-color-primary: #6d28d9;
+  --vk-color-primary-fg: #ffffff;
+  --vk-color-primary-hover: #5b21b6;
+  --vk-color-primary-active: #4c1d95;
+  --vk-color-primary-subtle: #f4f0ff;
+  --vk-color-primary-subtle-fg: #4c1d95;
+  --vk-color-ring: #8b5cf6;
+
+  /* Categorical chart slots — validated violet-first ordering, light steps.
+     Worst adjacent pair: CVD dE 9.1, normal-vision dE 19.6. Both above floor. */
+  --vk-chart-1: #4a3aa7;
+  --vk-chart-2: #eb6834;
+  --vk-chart-3: #1baf7a;
+  --vk-chart-4: #eda100;
+  --vk-chart-5: #e87ba4;
+  --vk-chart-6: #008300;
+
+  --vk-font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --vk-font-mono: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --ds-font-display: var(--font-display), var(--vk-font-sans);
+
+  --ds-rule: color-mix(in oklab, var(--vk-color-primary) 22%, transparent);
+  --ds-glow: color-mix(in oklab, var(--vk-color-primary) 12%, transparent);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+[data-theme="dark"] {
+  --vk-color-primary: #a78bfa;
+  --vk-color-primary-fg: #16101f;
+  --vk-color-primary-hover: #c4b5fd;
+  --vk-color-primary-active: #8b5cf6;
+  --vk-color-primary-subtle: #241a3d;
+  --vk-color-primary-subtle-fg: #ddd0ff;
+  --vk-color-ring: #a78bfa;
+
+  /* Same five hues, re-stepped for the dark surface (#17171a) and validated as
+     a set: adjacent CVD dE 8.4, normal-vision dE 19.3, all clear 3:1. */
+  --vk-chart-1: #9085e9;
+  --vk-chart-2: #d95926;
+  --vk-chart-3: #199e70;
+  --vk-chart-4: #c98500;
+  --vk-chart-5: #d55181;
+  --vk-chart-6: #008300;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* --- Base --------------------------------------------------------------- */
+
+:where(html) {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(html) {
+    scroll-behavior: auto;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+:where(body) {
+  background: var(--vk-color-bg);
+  color: var(--vk-color-fg);
+  font-family: var(--vk-font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:where(h1, h2, h3) {
+  font-family: var(--ds-font-display);
+  letter-spacing: -0.02em;
+}
+
+/* Skip link — the first tab stop on every page. */
+.ds-skip {
+  position: absolute;
+  inset-inline-start: var(--vk-space-4);
+  inset-block-start: -100%;
+  z-index: 100;
+  padding: var(--vk-space-2) var(--vk-space-4);
+  border-radius: var(--vk-radius-md);
+  background: var(--vk-color-primary);
+  color: var(--vk-color-primary-fg);
+  font-size: var(--vk-text-sm);
+  font-weight: var(--vk-weight-semibold);
+  text-decoration: none;
+}
+
+.ds-skip:focus-visible {
+  inset-block-start: var(--vk-space-4);
+}
+
+/* --- Recurring type treatments ------------------------------------------ */
+
+/* Mono "machine label" — track codes, day markers, room numbers. */
+.ds-mono {
+  font-family: var(--vk-font-mono);
+  font-size: var(--vk-text-xs);
+  font-weight: var(--vk-weight-medium);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vk-color-muted);
+}
+
+.ds-mono-accent {
+  color: var(--vk-color-primary);
+}
+
+.ds-caption {
+  max-width: 56ch;
+  font-size: var(--vk-text-sm);
+  color: var(--vk-color-muted);
+}
+
+.ds-measure {
+  max-width: 62ch;
+}
+
+/* --- Barcode motif ------------------------------------------------------ */
+
+/* Repeating hairlines. Decorative only: every use is aria-hidden. */
+.ds-barcode {
+  height: 2.5rem;
+  border-radius: 2px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    currentColor 0 2px,
+    transparent 2px 5px,
+    currentColor 5px 6px,
+    transparent 6px 11px,
+    currentColor 11px 14px,
+    transparent 14px 16px
+  );
+  opacity: 0.85;
+}
+
+.ds-barcode-thin {
+  height: 1.25rem;
+}
+
+/* --- Hero --------------------------------------------------------------- */
+
+.ds-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-bottom: 1px solid var(--vk-color-border);
+  background:
+    radial-gradient(60rem 28rem at 12% -10%, var(--ds-glow), transparent 70%),
+    radial-gradient(44rem 24rem at 92% 8%, var(--ds-glow), transparent 70%);
+}
+
+/* Scanline grid, behind everything, fading out downward. */
+.ds-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, var(--ds-rule) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ds-rule) 1px, transparent 1px);
+  background-size: 4.5rem 4.5rem;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
+  opacity: 0.5;
+}
+
+.ds-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vk-space-2) var(--vk-space-4);
+}
+
+.ds-hero-countdown {
+  padding: var(--vk-space-5);
+  border: 1px solid var(--vk-color-border);
+  border-radius: var(--vk-radius-lg);
+  background: color-mix(in oklab, var(--vk-color-surface) 82%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* --- Signature element: the attendee lanyard badge ---------------------- */
+
+.ds-lanyard {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+  width: 100%;
+  max-width: 21rem;
+  margin-inline: auto;
+}
+
+/* The strap: two ribbons meeting at the clip.
+   One polygon traces the outer V and back up the inner V, which leaves two
+   ribbons rather than a filled triangle. */
+.ds-lanyard-strap {
+  position: relative;
+  width: 100%;
+  height: 5rem;
+  clip-path: polygon(0 0, 13% 0, 50% 84%, 87% 0, 100% 0, 50% 100%);
+  background: linear-gradient(
+    100deg,
+    var(--vk-color-primary-active),
+    var(--vk-color-primary) 45%,
+    var(--vk-color-primary-hover)
+  );
+}
+
+.ds-lanyard-clip {
+  width: 3.25rem;
+  height: 0.85rem;
+  margin-block-start: -0.3rem;
+  border: 1px solid var(--vk-color-border-strong);
+  border-radius: var(--vk-radius-full);
+  background: var(--vk-color-surface-sunken);
+}
+
+.ds-lanyard-card {
+  position: relative;
+  width: 100%;
+  margin-block-start: -0.4rem;
+  padding: var(--vk-space-5);
+  border: 1px solid var(--vk-color-border);
+  border-radius: var(--vk-radius-lg);
+  background: var(--vk-color-surface);
+  box-shadow: var(--vk-shadow-lg);
+  text-align: start;
+}
+
+/* Punch hole at the top of the card. */
+.ds-lanyard-card::before {
+  content: "";
+  position: absolute;
+  inset-block-start: var(--vk-space-3);
+  inset-inline: 0;
+  width: 2.75rem;
+  height: 0.5rem;
+  margin-inline: auto;
+  border-radius: var(--vk-radius-full);
+  background: var(--vk-color-bg);
+  box-shadow: inset 0 0 0 1px var(--vk-color-border);
+}
+
+.ds-lanyard-body {
+  margin-block-start: var(--vk-space-4);
+}
+
+.ds-lanyard-name {
+  font-family: var(--ds-font-display);
+  font-size: var(--vk-text-2xl);
+  font-weight: var(--vk-weight-bold);
+  line-height: var(--vk-leading-tight);
+  letter-spacing: -0.01em;
+  color: var(--vk-color-fg);
+}
+
+.ds-lanyard-rule {
+  height: 1px;
+  margin-block: var(--vk-space-4);
+  border: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--vk-color-border) 0 6px,
+    transparent 6px 10px
+  );
+}
+
+.ds-lanyard-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--vk-space-3);
+}
+
+.ds-lanyard-barcode {
+  flex: 1;
+  color: var(--vk-color-fg);
+}
+
+/* --- Ticket / perforation motif ----------------------------------------- */
+
+.ds-ticket {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Notches on both edges, where a ticket would tear. */
+.ds-ticket::before,
+.ds-ticket::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 1px solid var(--vk-color-border);
+  border-radius: var(--vk-radius-full);
+  background: var(--vk-color-bg);
+  translate: 0 -50%;
+}
+
+.ds-ticket::before {
+  inset-inline-start: -0.6rem;
+}
+
+.ds-ticket::after {
+  inset-inline-end: -0.6rem;
+}
+
+/* --- Cards & panels ----------------------------------------------------- */
+
+.ds-panel {
+  height: 100%;
+  border: 1px solid var(--vk-color-border);
+  border-radius: var(--vk-radius-lg);
+  background: var(--vk-color-surface);
+}
+
+.ds-panel-pad {
+  padding: var(--vk-space-5);
+}
+
+.ds-chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vk-space-4);
+  height: 100%;
+  padding: var(--vk-space-5);
+  border: 1px solid var(--vk-color-border);
+  border-radius: var(--vk-radius-lg);
+  background: var(--vk-color-surface);
+}
+
+/* Keep a wide chart or table inside its own scroll container.
+   These carry tabindex="0" (see components/scroll-region.tsx), so the new tab
+   stop needs a focus ring of its own. */
+.ds-scroll-x {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.ds-scroll-x:focus-visible {
+  outline: 2px solid var(--vk-color-ring);
+  outline-offset: 3px;
+  border-radius: var(--vk-radius-sm);
+}
+
+/* --- Speakers ----------------------------------------------------------- */
+
+.ds-speaker {
+  display: grid;
+  justify-items: center;
+  gap: var(--vk-space-2);
+  width: 100%;
+  padding: var(--vk-space-4) var(--vk-space-3);
+  border: 1px solid var(--vk-color-border);
+  border-radius: var(--vk-radius-lg);
+  background: var(--vk-color-surface);
+  color: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color var(--vk-duration-fast) var(--vk-ease),
+    translate var(--vk-duration-fast) var(--vk-ease),
+    box-shadow var(--vk-duration-fast) var(--vk-ease);
+}
+
+.ds-speaker:hover {
+  border-color: var(--vk-color-primary);
+  box-shadow: var(--vk-shadow-md);
+  translate: 0 -3px;
+}
+
+.ds-speaker-name {
+  font-family: var(--ds-font-display);
+  font-size: var(--vk-text-md);
+  font-weight: var(--vk-weight-semibold);
+  line-height: var(--vk-leading-snug);
+}
+
+.ds-speaker-role {
+  font-size: var(--vk-text-sm);
+  color: var(--vk-color-muted);
+  line-height: var(--vk-leading-snug);
+}
+
+.ds-speaker-pop {
+  max-width: 20rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-speaker {
+    transition: none;
+  }
+
+  .ds-speaker:hover {
+    translate: none;
+  }
+}
+
+/* --- Session rows ------------------------------------------------------- */
+
+.ds-session {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vk-space-2) var(--vk-space-3);
+}
+
+.ds-session-people {
+  display: flex;
+  align-items: center;
+  gap: var(--vk-space-2);
+}
+
+.ds-session-room {
+  font-family: var(--vk-font-mono);
+  font-size: var(--vk-text-xs);
+  color: var(--vk-color-muted);
+}
+
+/* --- Media -------------------------------------------------------------- */
+
+.ds-frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--vk-color-border);
+  border-radius: var(--vk-radius-lg);
+  background: var(--vk-color-surface-sunken);
+}
+
+.ds-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ds-frame-caption {
+  padding: var(--vk-space-3) var(--vk-space-4);
+  border-block-start: 1px solid var(--vk-color-border);
+  background: var(--vk-color-surface);
+}
+
+/* --- Sponsor logos ------------------------------------------------------ */
+
+.ds-sponsor-logo {
+  width: 100%;
+  max-width: 9.5rem;
+  height: auto;
+  color: var(--vk-color-fg-subtle);
+}
+
+/* --- Footer promotion block -------------------------------------------- */
+
+.ds-promo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vk-space-3);
+  padding: var(--vk-space-4);
+  border: 1px dashed var(--vk-color-border-strong);
+  border-radius: var(--vk-radius-lg);
+  background: var(--vk-color-surface-subtle);
+}
+
+/* --- Utilities ---------------------------------------------------------- */
+
+.ds-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ds-fill {
+  width: 100%;
+}
+
+.ds-center {
+  text-align: center;
+}
+
+/* ==========================================================================
+   Layout classes for this site's sections
+   Section renders its children into a plain Container, and every VivekUI
+   primitive sets margin: 0 — so vertical rhythm is declared here, explicitly,
+   rather than inherited from a reset.
+   ========================================================================== */
+
+/* --- Navbar brand ------------------------------------------------------- */
+
+.ds-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: var(--vk-radius-md);
+  background: var(--vk-color-primary);
+  color: var(--vk-color-primary-fg);
+  font-family: var(--vk-font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.ds-brand-word {
+  font-family: var(--ds-font-display);
+  letter-spacing: -0.02em;
+}
+
+.ds-brand-year {
+  color: var(--vk-color-primary);
+}
+
+.ds-badge-link {
+  border-radius: var(--vk-radius-full);
+  text-decoration: none;
+}
+
+/* Only when the bar has room for it: the links, toggle, CTA and hamburger all
+   come first. Scoped to the Navbar's own container, not the viewport. */
+.ds-navbar-badge {
+  display: none;
+}
+
+@container vk-navbar (width >= 62rem) {
+  .ds-navbar-badge {
+    display: inline-flex;
+  }
+}
+
+/* --- Footer ------------------------------------------------------------- */
+
+.ds-footer-brand {
+  display: grid;
+  gap: var(--vk-space-3);
+}
+
+.ds-promo-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vk-space-2);
+}
+
+.ds-promo {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* --- Lanyard badge ------------------------------------------------------ */
+
+.ds-lanyard-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vk-space-3);
+  margin-block-start: var(--vk-space-3);
+}
+
+.ds-lanyard-dates {
+  display: grid;
+  gap: 2px;
+  text-align: end;
+}
+
+/* --- Hero --------------------------------------------------------------- */
+
+.ds-hero-grid {
+  display: grid;
+  gap: var(--vk-space-12);
+  align-items: center;
+}
+
+@container vk-section (width >= 60rem) {
+  .ds-hero-grid {
+    grid-template-columns: 1.05fr 0.95fr;
+  }
+}
+
+.ds-hero-copy {
+  display: grid;
+  justify-items: start;
+  gap: var(--vk-space-5);
+}
+
+.ds-hero-accent {
+  color: var(--vk-color-primary);
+}
+
+.ds-hero-media {
+  display: grid;
+  gap: var(--vk-space-6);
+  min-width: 0;
+}
+
+.ds-countdown-big {
+  --vk-countdown-value: clamp(2.25rem, 5.5vw, 3.25rem);
+  margin-block-start: var(--vk-space-2);
+}
+
+.ds-countdown-inline {
+  --vk-countdown-value: var(--vk-text-lg);
+}
+
+/* --- Who attends -------------------------------------------------------- */
+
+.ds-audience-notes {
+  display: grid;
+  align-content: center;
+  gap: var(--vk-space-4);
+}
+
+.ds-audience-note {
+  display: grid;
+  grid-template-columns: 3.25rem 1fr;
+  gap: var(--vk-space-3);
+  align-items: start;
+  padding-block-end: var(--vk-space-4);
+  border-block-end: 1px solid var(--vk-color-border);
+}
+
+.ds-audience-note:last-child {
+  padding-block-end: 0;
+  border-block-end: 0;
+}
+
+/* --- Section furniture -------------------------------------------------- */
+
+.ds-section-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vk-space-3);
+  margin-block-start: var(--vk-space-8);
+}
+
+.ds-schedule-top {
+  margin-block-end: var(--vk-space-10);
+}
+
+.ds-schedule-note .vk-card__body {
+  display: grid;
+  gap: var(--vk-space-4);
+}
+
+.ds-chart-card-wide {
+  max-width: 46rem;
+}
+
+/* --- Ticket tiers ------------------------------------------------------- */
+
+.ds-tier-cta {
+  display: grid;
+  gap: var(--vk-space-3);
+  width: 100%;
+}
+
+.ds-tier-deadline {
+  display: grid;
+  gap: var(--vk-space-1);
+  padding: var(--vk-space-3);
+  border: 1px dashed var(--vk-color-primary);
+  border-radius: var(--vk-radius-md);
+  background: var(--vk-color-primary-subtle);
+}
+
+.ds-deadline-panel {
+  justify-self: start;
+}
+
+/* --- Tabs --------------------------------------------------------------- */
+
+/*
+ * Inherits the tab's own colour exactly — no opacity, no muted token.
+ *
+ * The selected pill tab paints --vk-color-primary behind its label, so the muted
+ * grey this started as landed at 1.26:1 on violet. Fading currentColor instead
+ * fixed the selected tab but dropped the unselected one to 3.83:1, because that
+ * tab's colour is already at the muted step. So the weight alone does the
+ * de-emphasis, and the contrast is whatever the library already tuned.
+ */
+.ds-tab-date {
+  color: currentColor;
+  font-weight: var(--vk-weight-normal);
+}
+
+/* --- Filter browsers ---------------------------------------------------- */
+
+.ds-browser {
+  display: grid;
+  gap: var(--vk-space-8);
+}
+
+.ds-browser-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--vk-space-4) var(--vk-space-6);
+  padding-block-end: var(--vk-space-4);
+  border-block-end: 1px solid var(--vk-color-border);
+}
+
+.ds-day {
+  display: grid;
+  gap: var(--vk-space-6);
+}
+
+.ds-day-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--vk-space-2) var(--vk-space-4);
+}
+
+.ds-session-abstract {
+  flex-basis: 100%;
+  color: var(--vk-color-muted);
+}
+
+/* --- Inner page heads --------------------------------------------------- */
+
+/*
+ * Deliberately NOT `justify-items: start`.
+ *
+ * Breadcrumb declares `container-type: inline-size`, so its width comes from its
+ * parent and its own contents contribute nothing. As a shrink-to-fit grid item it
+ * resolved to zero width, which collapsed the trail into a stack of clipped
+ * fragments and left its narrow container query permanently active. Anything else
+ * here that needs to shrink-wrap asks for it with `justify-self`.
+ */
+.ds-page-head .vk-section__inner {
+  display: grid;
+  gap: var(--vk-space-4);
+}
+
+/* --- Track list --------------------------------------------------------- */
+
+.ds-track-list {
+  display: grid;
+  gap: var(--vk-space-4);
+}
+
+.ds-track-row {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 9rem) minmax(0, 1fr);
+  gap: var(--vk-space-3);
+  align-items: baseline;
+  padding-block-end: var(--vk-space-4);
+  border-block-end: 1px solid var(--vk-color-border);
+}
+
+.ds-track-row:last-child {
+  padding-block-end: 0;
+  border-block-end: 0;
+}
+
+@media (width < 48rem) {
+  .ds-track-row,
+  .ds-audience-note {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Built with --------------------------------------------------------- */
+
+.ds-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vk-space-3);
+}
+
+.ds-why-list {
+  display: grid;
+  gap: var(--vk-space-6);
+  margin-block-start: var(--vk-space-6);
+}
+
+.ds-why {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: var(--vk-space-4);
+  align-items: start;
+}
+
+/* --- Chart legibility tweaks -------------------------------------------- */
+
+/*
+ * Strengthen the halo behind the pie's percentage labels.
+ *
+ * The library already paints a stroke under them, but at 45% of the foreground
+ * it is thin against the lighter slices — and those direct labels are exactly
+ * the relief that lets a slice colour sit under 3:1 on a white surface. Kept as
+ * an fg-derived mix so it stays a dark halo in light mode and a light one in
+ * dark mode.
+ */
+.ds-chart-card .vk-pie-chart__label {
+  stroke: color-mix(in oklab, var(--vk-color-fg) 72%, transparent);
+  stroke-width: 3px;
+}
+
+/* --- Small spacing corrections ----------------------------------------- */
+
+/* Sub-heading immediately above a block that has no margin of its own. */
+.ds-subhead {
+  margin-block-end: var(--vk-space-4);
+}
+
+/* --- Two containment fixes found by measuring at 360px ------------------ */
+
+/*
+ * The charts' visually hidden data table is `position: absolute` with a 1px
+ * inline-size, but a `<table>` cannot lay out narrower than its min-content —
+ * and its cells are `white-space: nowrap` — so it was resolving to ~350px and
+ * pushing the page into a sideways scroll on a narrow phone.
+ *
+ * `table-layout: fixed` makes it honour the 1px it was given, and the positioned
+ * card keeps it anchored inside the chart rather than the whole document.
+ */
+.ds-chart-card {
+  position: relative;
+}
+
+.ds-chart-card .vk-chart__table {
+  table-layout: fixed;
+  inline-size: 1px;
+}
+
+/*
+ * Inline `Code` is `white-space: nowrap`, which is right for a short token and
+ * wrong for a whole command: `npm ls --omit=dev @the_viveksingh/vivek-ui` is
+ * wider than a 360px viewport. Let these two places wrap instead of overflow.
+ */
+.ds-promo .vk-code,
+.ds-why .vk-code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* --- Solid buttons on a primary surface --------------------------------- */
+
+/*
+ * `Section background="primary"` re-points --vk-color-bg/-fg/-muted/-border for
+ * the whole subtree, but not --vk-color-primary — so a solid Button inside a
+ * primary CTA paints the exact violet it is sitting on (measured: both
+ * rgb(109,40,217), a 1:1 contrast ratio and no visible button at all).
+ *
+ * Invert it: the surface's foreground becomes the fill and the accent becomes the
+ * label, which is the conventional treatment for a button on a brand-colour band.
+ */
+.vk-section[data-background="primary"] .vk-button[data-variant="solid"] {
+  background: var(--vk-color-fg);
+  color: var(--vk-color-primary);
+  border-color: transparent;
+}
+
+.vk-section[data-background="primary"] .vk-button[data-variant="solid"]:hover {
+  background: color-mix(
+    in oklab,
+    var(--vk-color-fg) 90%,
+    var(--vk-color-primary)
+  );
+}
+
+/* --- Clone affordance (footer) ------------------------------------------ */
+
+.ds-clone {
+  display: grid;
+  gap: var(--vk-space-3);
+  padding: var(--vk-space-4);
+  border: 1px solid var(--vk-color-primary);
+  border-radius: var(--vk-radius-lg);
+  background: var(--vk-color-primary-subtle);
+}
+
+.ds-clone-cmd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vk-space-2);
+}
+
+/* The clone URL is longer than the 24rem brand column, so it wraps rather than
+   pushing the footer into a sideways scroll. */
+.ds-clone .vk-code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: var(--vk-text-sm);
+}
+
+.ds-clone-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vk-space-2) var(--vk-space-4);
+  font-size: var(--vk-text-sm);
+}
+
+.ds-clone-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vk-space-1);
+  color: var(--vk-color-primary-subtle-fg);
+  font-weight: var(--vk-weight-medium);
+  text-decoration: none;
+}
+
+.ds-clone-links a:hover {
+  text-decoration: underline;
+}
+
+/* Navbar "Get the code" — the external row keeps the GitHub mark aligned with
+   the label at the mixed sizes the link row and the mobile sheet use. */
+.vk-navbar__link-icon > svg {
+  flex: none;
+}
+
+/* --- Clone panel (/built-with) ------------------------------------------ */
+
+.ds-clone-panel {
+  display: grid;
+  gap: var(--vk-space-6);
+  margin-block-end: var(--vk-space-8);
+}
+
+@container vk-section (width >= 58rem) {
+  .ds-clone-panel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.ds-clone-step {
+  display: grid;
+  align-content: start;
+  gap: var(--vk-space-2);
+  padding: var(--vk-space-5);
+  border: 1px solid var(--vk-color-border);
+  border-radius: var(--vk-radius-lg);
+  background: var(--vk-color-surface);
+}
+
+/* The clone URL and the chained install command are both longer than a third of
+   the row, so they wrap instead of forcing a sideways scroll. */
+.ds-clone-step .vk-code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: var(--vk-text-sm);
+}
+
+/* A Button rendering an icon plus a label needs them on one baseline. */
+.vk-button > svg {
+  flex: none;
+  margin-inline-end: var(--vk-space-2);
+}
+
+/* --- Footer column balance ---------------------------------------------- */
+
+/*
+ * The footer carries four link columns now. The library's default gives the nav
+ * an auto-fit grid inside a 2fr track, which fits three of them and wraps the
+ * fourth onto its own row with a large gap above it. Once the footer is wide
+ * enough, hand the nav more of the row and pin it to four equal columns.
+ */
+@container vk-section (width >= 64rem) {
+  .vk-footer__top:has(.vk-footer__brand):has(.vk-footer__nav) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr);
+  }
+
+  .vk-footer__nav {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--vk-space-6);
+  }
+}
+
+/* A little more room for the brand column, so the clone URL wraps to two lines
+   rather than three. */
+.vk-footer__brand {
+  max-width: 27rem;
+}
+
+/* A command rendered by components/command.tsx: it carries its own <wbr> break
+   opportunities, so it must not also break at arbitrary points. */
+.ds-cmd {
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+  font-size: var(--vk-text-sm);
 }
