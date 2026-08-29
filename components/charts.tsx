@@ -16,7 +16,7 @@ export function AudienceMixChart() {
       data={audienceMix.map((d) => ({ label: d.label, value: d.value }))}
       donut
       innerRadius={0.62}
-      size={280}
+      diameter={280}
       padAngle={1.2}
       showLabels
       showLegend

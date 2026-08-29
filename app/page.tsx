@@ -446,7 +446,7 @@ export default function HomePage() {
         title="Frequently asked"
         headingLevel={2}
         name="devsummit-faq"
-        defaultOpen={0}
+        defaultOpenIndex={0}
         items={faqs.map((entry) => ({
           id: entry.id,
           question: entry.question,

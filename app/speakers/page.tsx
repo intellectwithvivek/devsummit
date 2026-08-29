@@ -74,7 +74,7 @@ export default function SpeakersPage() {
       </Section>
 
       <CTA
-        variant="primary"
+        background="primary"
         title="Want to hear them in person?"
         description="Early-bird tickets are ₹4,900 and include both days and all five tracks."
         headingLevel={2}
