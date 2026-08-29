@@ -73,7 +73,7 @@ export default function SchedulePage() {
       </Section>
 
       <CTA
-        variant="muted"
+        background="muted"
         title="Workshops are the part that sells out"
         description="Forty seats each, not recorded. Regular tickets include one; VIP includes all twelve."
         headingLevel={2}

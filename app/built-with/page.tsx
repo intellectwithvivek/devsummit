@@ -309,7 +309,7 @@ export default function BuiltWithPage() {
         title="Questions developers ask"
         headingLevel={2}
         name="devsummit-template-faq"
-        defaultOpen={0}
+        defaultOpenIndex={0}
         items={templateFaqs.map((entry) => ({
           id: entry.id,
           question: entry.question,
